@@ -1,6 +1,8 @@
 package org.murygin.archive.service;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.murygin.archive.dao.IDocumentDao;
@@ -19,6 +21,21 @@ public class ArchiveService implements IArchiveService, Serializable {
     public void save(Document document) {
         getDocumentDao().insert(document);      
     }
+    
+    @Override
+    public byte[] getDocumentFile(String id) {
+        Document document = getDocumentDao().load(id);
+        if(document!=null) {
+            return document.getFileData();
+        } else {
+            return null;
+        }
+    }
+    
+    @Override
+    public List<DocumentMetadata> findDocuments(String personName, Date date) {
+        return getDocumentDao().findByPersonNameDate(personName, date);
+    }
 
     public IDocumentDao getDocumentDao() {
         return DocumentDao;
@@ -27,5 +44,6 @@ public class ArchiveService implements IArchiveService, Serializable {
     public void setDocumentDao(IDocumentDao documentDao) {
         DocumentDao = documentDao;
     }
+
 
 }
