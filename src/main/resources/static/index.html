@@ -1,10 +1,48 @@
-<html>
+<html ng-app="archive">
+<head>
+<meta charset="utf8" />
+<title>Document Archive</title>
+<link rel="stylesheet" href="styles/bootstrap.min.css">
+</head>
 <body>
-	<form method="POST" enctype="multipart/form-data" action="/archive/upload">
-		File to upload: <input type="file" name="file"><br /> 
-		Your Name: <input type="text" name="name"><br /> 
-		Document date: <input type="text" name="date">
-		<input type="submit" value="Upload"> Press here to upload the file!
-	</form>
+	<div ng-controller="UploadCtrl">
+		<table class="table">
+			<tr>
+				<td>Name</td>
+				<td>Date</td>
+				<td>File</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td><input type="text" ng-model="name"></td>
+				<td><input type="text" ng-model="date"></td>
+				<td><input type="file" file-model="myFile" /></td>
+				<td><button ng-click="uploadFile()">Upload</button></td>
+			</tr>
+		</table>
+	</div>
+	<div ng-controller="ArchiveCtrl">
+		<table class="table">
+			<tr>
+				<td>Name</td>
+				<td>Date</td>
+			</tr>
+			<tr>
+				<td><input type="text" ng-model="name" ng-change="search(name,date);" /></td>
+				<td><input type="text" ng-model="date"ng-change="search(name,date);" /></td>
+			</tr>
+		</table>
+		<table class="table">
+			<tr ng-repeat="metadata in metadataList">
+				<td><a href="/archive/document/{{metadata.uuid}}">{{metadata.uuid}}</a></td>
+				<td><a href="/archive/document/{{metadata.uuid}}">{{metadata.fileName}}</a></td>
+				<td><a href="/archive/document/{{metadata.uuid}}">{{metadata.personName}}</a></td>
+				<td><a href="/archive/document/{{metadata.uuid}}">{{metadata.documentDate}}</a></td>
+			</tr>
+		</table>
+		<p>Name: {{name}}, Date: {{date}}</p>
+	</div>
+	<script src="lib/angular/angular-1.2.16.js"></script>
+	<script src="app.js"></script>
 </body>
 </html>

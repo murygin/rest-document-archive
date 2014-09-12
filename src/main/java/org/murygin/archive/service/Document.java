@@ -15,6 +15,10 @@ public class Document extends DocumentMetadata {
     public Document(Properties properties) {
         super(properties);
     }
+    
+    public Document(DocumentMetadata metadata) {
+        super(metadata.getUuid(), metadata.getFileName(), metadata.getDocumentDate(), metadata.getPersonName());
+    }
 
     public byte[] getFileData() {
         return fileData;

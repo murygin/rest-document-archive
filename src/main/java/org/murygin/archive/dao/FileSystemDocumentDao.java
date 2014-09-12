@@ -8,10 +8,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.DirectoryIteratorException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -72,23 +75,50 @@ public class FileSystemDocumentDao implements IDocumentDao {
     }
 
     private List<DocumentMetadata> findInFileSystem(String personName, Date date) throws IOException  {
-        // TODO Auto-generated method stub
-        return null;
+        List<String> uuidList = getUuidList();
+        List<DocumentMetadata> metadataList = new ArrayList<DocumentMetadata>(uuidList.size());
+        for (String uuid : uuidList) {
+            DocumentMetadata metadata = loadMetadataFromFileSystem(uuid);
+            boolean match = true;
+            if(metadata!=null) {
+                if(personName!=null) {
+                    match = (personName.equals(metadata.getPersonName()));
+                }
+                if(match && date!=null) {
+                    match = (date.equals(metadata.getDocumentDate()));
+                }
+                if(match) {
+                    metadataList.add(metadata);
+                }
+            }
+        }
+        return metadataList;
     }
 
-    private Document loadFromFileSystem(String uuid) throws IOException {
-        Document document = null;
+    private DocumentMetadata loadMetadataFromFileSystem(String uuid) throws IOException {
+        DocumentMetadata document = null;
         String dirPath = getDirectoryPath(uuid);
         File file = new File(dirPath);
         if(file.exists()) {
             Properties properties = readProperties(uuid);
-            document = new Document(properties);
-            StringBuilder sb = new StringBuilder();
-            sb.append(dirPath).append(File.separator).append(document.getFileName());
-            Path path = Paths.get(sb.toString());
-            document.setFileData(Files.readAllBytes(path));
+            document = new DocumentMetadata(properties);
+            
         } 
         return document;
+    }
+    
+    private Document loadFromFileSystem(String uuid) throws IOException {
+       DocumentMetadata metadata = loadMetadataFromFileSystem(uuid);
+       if(metadata==null) {
+           return null;
+       }
+       String dirPath = getDirectoryPath(uuid);
+       Document document = new Document(metadata);
+       StringBuilder sb = new StringBuilder();
+       sb.append(dirPath).append(File.separator).append(document.getFileName());
+       Path path = Paths.get(sb.toString());
+       document.setFileData(Files.readAllBytes(path));
+       return document;
     }
     
     private void saveFileData(Document document) throws IOException {
@@ -104,6 +134,17 @@ public class FileSystemDocumentDao implements IDocumentDao {
             File f = new File(new File(path), META_DATA_FILE_NAME);
             OutputStream out = new FileOutputStream( f );
             props.store(out, "Document meta data");       
+    }
+    
+    private List<String> getUuidList() {
+        File file = new File(DIRECTORY);
+        String[] directories = file.list(new FilenameFilter() {
+          @Override
+          public boolean accept(File current, String name) {
+            return new File(current, name).isDirectory();
+          }
+        });
+        return Arrays.asList(directories);
     }
     
     private Properties readProperties(String uuid) throws IOException {

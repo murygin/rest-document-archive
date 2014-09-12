@@ -26,15 +26,22 @@ public class DocumentMetadata {
     protected String personName;
 
     public DocumentMetadata(String fileName, Date documentDate, String personName) {
+        this(UUID.randomUUID().toString(), fileName, documentDate,personName);
+    }
+    
+    public DocumentMetadata(String uuid, String fileName, Date documentDate, String personName) {
         super();
-        this.uuid = UUID.randomUUID().toString();
+        this.uuid = uuid;
         this.fileName = fileName;
         this.documentDate = documentDate;
         this.personName = personName;
     }
     
     public DocumentMetadata(Properties properties) {
-        this(properties.getProperty(PROP_FILE_NAME),null,properties.getProperty(PROP_PERSON_NAME));
+        this(properties.getProperty(PROP_UUID),
+             properties.getProperty(PROP_FILE_NAME),
+             null,
+             properties.getProperty(PROP_PERSON_NAME));
         String dateString = properties.getProperty(PROP_DOCUMENT_DATE);
         if(dateString!=null) {
             try {

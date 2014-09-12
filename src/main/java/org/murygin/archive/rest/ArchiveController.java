@@ -64,10 +64,11 @@ public class ArchiveController {
     }
     
     @RequestMapping(value = "/documents", method = RequestMethod.GET)
-    public List<DocumentMetadata> findDocument(
-            @RequestParam(value="person") String personName,
-            @RequestParam(value="date") @DateTimeFormat(pattern="yyyy-MM-dd") Date date) {
-        return getArchiveService().findDocuments(personName,date);
+    public HttpEntity<List<DocumentMetadata>> findDocument(
+            @RequestParam(value="person", required=false) String personName,
+            @RequestParam(value="date", required=false) @DateTimeFormat(pattern="yyyy-MM-dd") Date date) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        return new ResponseEntity<List<DocumentMetadata>>(getArchiveService().findDocuments(personName,date), httpHeaders,HttpStatus.OK);
     }
 
     public IArchiveService getArchiveService() {
