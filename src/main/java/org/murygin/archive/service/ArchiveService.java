@@ -18,8 +18,9 @@ public class ArchiveService implements IArchiveService, Serializable {
     private IDocumentDao DocumentDao;
 
     @Override
-    public void save(Document document) {
-        getDocumentDao().insert(document);      
+    public DocumentMetadata save(Document document) {
+        getDocumentDao().insert(document); 
+        return document.getMetadata();
     }
     
     @Override

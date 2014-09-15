@@ -37,22 +37,22 @@ public class ArchiveController {
     }
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public @ResponseBody String handleFileUpload(
+    public @ResponseBody DocumentMetadata handleFileUpload(
             @RequestParam(value="file", required=true) MultipartFile file ,
             @RequestParam(value="name", required=true) String name,
             @RequestParam(value="date", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date date) {
-        if (!file.isEmpty()) {
-            try {
-                Document document = new Document(file.getBytes(), file.getOriginalFilename(), date, name );
-                getArchiveService().save(document);
-                return "You successfully uploaded " + name + " into " + name + "-uploaded !";
-            } catch (Exception e) {
-                LOG.error("Error while uploading.", e);
-                return "You failed to upload " + name + " => " + e.getMessage();
-            }
-        } else {
-            return "You failed to upload " + name + " because the file was empty.";
-        }
+        
+        try {
+            Document document = new Document(file.getBytes(), file.getOriginalFilename(), date, name );
+            getArchiveService().save(document);
+            return document.getMetadata();
+        } catch (RuntimeException e) {
+            LOG.error("Error while uploading.", e);
+            throw e;
+        } catch (Exception e) {
+            LOG.error("Error while uploading.", e);
+            throw new RuntimeException(e);
+        }      
     }
     
     @RequestMapping(value = "/document/{id}", method = RequestMethod.GET)

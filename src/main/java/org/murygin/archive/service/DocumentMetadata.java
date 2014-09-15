@@ -24,6 +24,11 @@ public class DocumentMetadata {
     protected String fileName;
     protected Date documentDate;
     protected String personName;
+    
+    public DocumentMetadata() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
     public DocumentMetadata(String fileName, Date documentDate, String personName) {
         this(UUID.randomUUID().toString(), fileName, documentDate,personName);

@@ -27,4 +27,8 @@ public class Document extends DocumentMetadata {
         this.fileData = fileData;
     }
     
+    public DocumentMetadata getMetadata() {
+        return new DocumentMetadata(getUuid(), getFileName(), getDocumentDate(), getPersonName());
+    }
+    
 }
