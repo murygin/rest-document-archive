@@ -34,7 +34,7 @@ app.service('fileUpload', ['$http','ArchiveService', function($http, ArchiveServ
 	this.uploadFileToUrl = function(uploadUrl, file, name, date) {
 		var fd = new FormData();
 		fd.append('file', file);
-		fd.append('name', name);
+		fd.append('person', name);
 		fd.append('date', date);
 		$http.post(uploadUrl, fd, {
 			transformRequest : angular.identity,

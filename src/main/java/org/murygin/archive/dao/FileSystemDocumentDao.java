@@ -8,11 +8,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.DirectoryIteratorException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -26,6 +24,17 @@ import org.murygin.archive.service.Document;
 import org.murygin.archive.service.DocumentMetadata;
 import org.springframework.stereotype.Service;
 
+/**
+ * Data access object to insert, find and load {@link Document}s.
+ * 
+ * FileSystemDocumentDao saves documents in the file system. No database in involved.
+ * For each document a folder is created. The folder contains the document
+ * and a properties files with the meta data of the document.
+ * Each document in the archive has a Universally Unique Identifier (UUID).
+ * The name of the documents folder is the UUID of the document.
+ * 
+ * @author Daniel Murygin <daniel.murygin[at]gmail[dot]com>
+ */
 @Service("documentDao")
 public class FileSystemDocumentDao implements IDocumentDao {
 
@@ -34,12 +43,18 @@ public class FileSystemDocumentDao implements IDocumentDao {
     public static final String DIRECTORY = "archive";
     public static final String META_DATA_FILE_NAME = "metadata.properties";
     
-    
     @PostConstruct
     public void init() {
         createDirectory(DIRECTORY);
     }
     
+    /**
+     * Inserts a document to the archive by creating a folder with the UUID
+     * of the document. In the folder the document is saved and a properties file
+     * with the meta data of the document. 
+     * 
+     * @see org.murygin.archive.dao.IDocumentDao#insert(org.murygin.archive.service.Document)
+     */
     @Override
     public void insert(Document document) {
         try {
@@ -47,10 +62,35 @@ public class FileSystemDocumentDao implements IDocumentDao {
             saveFileData(document);
             saveMetaData(document);
         } catch (IOException e) {
-            LOG.error("Error while inserting document", e);
+            String message = "Error while inserting document";
+            LOG.error(message, e);
+            throw new RuntimeException(message, e);
         }
     }
     
+    /**
+     * Finds documents in the data store matching the given parameter.
+     * To find a document all document meta data sets are iterated to check if they match
+     * the parameter.
+     * 
+     * @see org.murygin.archive.dao.IDocumentDao#findByPersonNameDate(java.lang.String, java.util.Date)
+     */
+    @Override
+    public List<DocumentMetadata> findByPersonNameDate(String personName, Date date) {
+        try {
+            return findInFileSystem(personName,date);
+        } catch (IOException e) {
+            String message = "Error while finding document, person name: " + personName + ", date:" + date;
+            LOG.error(message, e);
+            throw new RuntimeException(message, e);
+        }
+    }
+    
+    /**
+     * Returns the document from the data store with the given UUID.
+     * 
+     * @see org.murygin.archive.dao.IDocumentDao#load(java.lang.String)
+     */
     @Override
     public Document load(String uuid) {
         try {
@@ -63,36 +103,31 @@ public class FileSystemDocumentDao implements IDocumentDao {
         
     }
     
-    @Override
-    public List<DocumentMetadata> findByPersonNameDate(String personName, Date date) {
-        try {
-            return findInFileSystem(personName,date);
-        } catch (IOException e) {
-            String message = "Error while finding document, person name: " + personName + ", date:" + date;
-            LOG.error(message, e);
-            throw new RuntimeException(message, e);
-        }
-    }
 
     private List<DocumentMetadata> findInFileSystem(String personName, Date date) throws IOException  {
         List<String> uuidList = getUuidList();
         List<DocumentMetadata> metadataList = new ArrayList<DocumentMetadata>(uuidList.size());
         for (String uuid : uuidList) {
-            DocumentMetadata metadata = loadMetadataFromFileSystem(uuid);
-            boolean match = true;
-            if(metadata!=null) {
-                if(personName!=null) {
-                    match = (personName.equals(metadata.getPersonName()));
-                }
-                if(match && date!=null) {
-                    match = (date.equals(metadata.getDocumentDate()));
-                }
-                if(match) {
-                    metadataList.add(metadata);
-                }
+            DocumentMetadata metadata = loadMetadataFromFileSystem(uuid);         
+            if(isMatched(metadata, personName, date)) {
+                metadataList.add(metadata);
             }
         }
         return metadataList;
+    }
+
+    private boolean isMatched(DocumentMetadata metadata, String personName, Date date) {
+        if(metadata==null) {
+            return false;
+        }
+        boolean match = true;
+        if(personName!=null) {
+            match = (personName.equals(metadata.getPersonName()));
+        }
+        if(match && date!=null) {
+            match = (date.equals(metadata.getDocumentDate()));
+        }
+        return match;
     }
 
     private DocumentMetadata loadMetadataFromFileSystem(String uuid) throws IOException {
@@ -112,13 +147,17 @@ public class FileSystemDocumentDao implements IDocumentDao {
        if(metadata==null) {
            return null;
        }
-       String dirPath = getDirectoryPath(uuid);
+       Path path = Paths.get(getFilePath(metadata));
        Document document = new Document(metadata);
-       StringBuilder sb = new StringBuilder();
-       sb.append(dirPath).append(File.separator).append(document.getFileName());
-       Path path = Paths.get(sb.toString());
        document.setFileData(Files.readAllBytes(path));
        return document;
+    }
+
+    private String getFilePath(DocumentMetadata metadata) {
+        String dirPath = getDirectoryPath(metadata.getUuid());
+        StringBuilder sb = new StringBuilder();
+        sb.append(dirPath).append(File.separator).append(metadata.getFileName());
+        return sb.toString();
     }
     
     private void saveFileData(Document document) throws IOException {

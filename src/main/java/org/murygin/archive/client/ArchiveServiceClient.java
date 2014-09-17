@@ -19,6 +19,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * @author Daniel Murygin <dm[at]sernet[dot]de>
+ *
+ */
 public class ArchiveServiceClient implements IArchiveService {
 
     private static final Logger LOG = Logger.getLogger(ArchiveServiceClient.class);
@@ -48,7 +52,7 @@ public class ArchiveServiceClient implements IArchiveService {
         String tempFilePath = writeDocumentToTempFile(document);
         MultiValueMap<String, Object> parts = createMultipartFileParam(tempFilePath);
         String dateString = DocumentMetadata.DATE_FORMAT.format(document.getDocumentDate());
-        DocumentMetadata documentMetadata = getRestTemplate().postForObject(getServiceUrl() + "/upload?name={name}&date={date}", 
+        DocumentMetadata documentMetadata = getRestTemplate().postForObject(getServiceUrl() + "/upload?person={name}&date={date}", 
                 parts, 
                 DocumentMetadata.class,
                 document.getPersonName(), 

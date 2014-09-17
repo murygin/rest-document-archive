@@ -1,10 +1,18 @@
 package org.murygin.archive.service;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Properties;
 
-public class Document extends DocumentMetadata {
+/**
+ * A document from an archive managed by {@link IArchiveService}.
+ * 
+ * @author Daniel Murygin <daniel.murygin[at]gmail[dot]com>
+ */
+public class Document extends DocumentMetadata implements Serializable {
 
+    private static final long serialVersionUID = 2004955454853853315L;
+    
     private byte[] fileData;
     
     public Document( byte[] fileData, String fileName, Date documentDate, String personName) {

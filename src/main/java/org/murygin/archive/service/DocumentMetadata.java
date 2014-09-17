@@ -1,5 +1,6 @@
 package org.murygin.archive.service;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,8 +9,15 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
-public class DocumentMetadata {
+/**
+ * Meta data of a document from an archive managed by {@link IArchiveService}.
+ * 
+ * @author Daniel Murygin <daniel.murygin[at]gmail[dot]com>
+ */
+public class DocumentMetadata implements Serializable {
     
+    static final long serialVersionUID = 7283287076019483950L;
+
     private static final Logger LOG = Logger.getLogger(DocumentMetadata.class);
     
     public static final String PROP_UUID = "uuid";
@@ -27,7 +35,6 @@ public class DocumentMetadata {
     
     public DocumentMetadata() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     public DocumentMetadata(String fileName, Date documentDate, String personName) {
