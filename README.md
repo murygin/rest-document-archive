@@ -13,6 +13,8 @@ mvn package
 java -jar target/rest-document-archive-0.1.0.jar
 ```
 
+Open http://localhost:8080/ to see the AngularJS frontend.
+
 
 REST API
 --------
