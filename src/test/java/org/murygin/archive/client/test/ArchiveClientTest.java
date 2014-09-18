@@ -19,18 +19,30 @@ import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.murygin.archive.Application;
 import org.murygin.archive.client.ArchiveServiceClient;
 import org.murygin.archive.dao.FileSystemDocumentDao;
 import org.murygin.archive.service.Document;
 import org.murygin.archive.service.DocumentMetadata;
 import org.murygin.archive.service.IArchiveService;
+import org.springframework.boot.test.IntegrationTest;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = Application.class)
+@WebAppConfiguration
+@IntegrationTest
 public class ArchiveClientTest {
 
     private static final Logger LOG = Logger.getLogger(ArchiveClientTest.class);
     
     private static final String TEST_FILE_DIR = "test-images";
 
+    ApplicationContext applicationContext;
     IArchiveService client;
 
     @Before
