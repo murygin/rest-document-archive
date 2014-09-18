@@ -23,12 +23,21 @@
 					ng-change="search(name,date);" /></td>
 			</tr>
 		</table>
-		<table id="table">
-			<tr ng-repeat="metadata in metadataList">
-				<td><a href="/archive/document/{{metadata.uuid}}">{{metadata.fileName}}</a></td>
-				<td><a href="/archive/document/{{metadata.uuid}}">{{metadata.personName}}</a></td>
-				<td><a href="/archive/document/{{metadata.uuid}}">{{metadata.documentDate | date:'yyyy-MM-dd'}}</a></td>
-			</tr>
+		<table id="table-6">
+			<thead>
+    			<tr>
+    				<th>File</th>
+    				<th>Person</th>
+    				<th>Date</th>
+    			</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="metadata in metadataList">
+					<td><a href="/archive/document/{{metadata.uuid}}">{{metadata.fileName}}</a></td>
+					<td><a href="/archive/document/{{metadata.uuid}}">{{metadata.personName}}</a></td>
+					<td><a href="/archive/document/{{metadata.uuid}}">{{metadata.documentDate | date:'yyyy-MM-dd'}}</a></td>
+				</tr>
+			</tbody>		
 		</table>
 		</div>
 		<div id="sidebar" ng-controller="UploadCtrl">
