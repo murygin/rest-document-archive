@@ -67,4 +67,4 @@ Documentation
    
    [src/main/resources/static](https://github.com/murygin/rest-document-archive/tree/master/src/main/resources/static)
 
-   A web client made with AngularJS.
+   A web client made with [AngularJS](https://angularjs.org/).
