@@ -56,3 +56,13 @@ Documentation
   * Implementation: [FileSystemDocumentDao.java](https://github.com/murygin/rest-document-archive/blob/master/src/main/java/org/murygin/archive/dao/FileSystemDocumentDao.java)  
    
    Data access object to insert, find and load documents. FileSystemDocumentDao saves documents in the file system. No database in involved. For each document a folder is created. The folder contains the document and a properties files with the meta data of the document. Each document in the archive has a Universally Unique Identifier (UUID). The name of the documents folder is the UUID of the document.
+
+* Client
+   
+   [ArchiveServiceClient.java](https://github.com/murygin/rest-document-archive/blob/master/src/main/java/org/murygin/archive/client/ArchiveServiceClient.java)
+   
+   A client for the document archive which is using the REST service.
+
+* Web client
+   
+   A web client made with AngularJS web client: [src/main/resources/static](https://github.com/murygin/rest-document-archive/tree/master/src/main/resources/static)
