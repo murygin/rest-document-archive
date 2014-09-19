@@ -65,4 +65,6 @@ Documentation
 
 * Web client
    
-   A web client made with AngularJS web client: [src/main/resources/static](https://github.com/murygin/rest-document-archive/tree/master/src/main/resources/static)
+   [src/main/resources/static](https://github.com/murygin/rest-document-archive/tree/master/src/main/resources/static)
+
+   A web client made with AngularJS.
