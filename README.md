@@ -1,7 +1,7 @@
 REST Document Archive
 =====================
 
-A simple document archive with REST interface.
+A simple document archive with REST interface. You can read more about this project in my blog post: [A REST web service, file uploads & Spring Boot](https://murygin.wordpress.com/2014/10/13/rest-web-service-file-uploads-spring-boot/).
 
 Build and run
 -------------
